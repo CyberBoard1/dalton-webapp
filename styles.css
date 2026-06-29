@@ -12,7 +12,7 @@
   --danger: #b42318;
   --shadow: 0 14px 38px rgba(16, 24, 40, 0.08);
   --radius: 20px;
-  --container: 1180px;
+  --container: 80vw;
 }
 
 * { box-sizing: border-box; }
@@ -25,6 +25,7 @@ body {
   background: var(--bg);
   color: var(--text);
   line-height: 1.55;
+  overflow-x: hidden;
 }
 
 a { color: inherit; }
@@ -32,7 +33,7 @@ button, input, select { font: inherit; }
 button { cursor: pointer; }
 
 .container {
-  width: min(var(--container), calc(100% - 32px));
+  width: min(var(--container), 1680px, calc(100% - 32px));
   margin-inline: auto;
 }
 
@@ -432,7 +433,7 @@ td:first-child {
 
 .visual-layout {
   display: grid;
-  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-columns: 180px minmax(0, 1fr);
   gap: 18px;
 }
 
@@ -483,11 +484,13 @@ td:first-child {
 }
 
 .svg-stage {
-  overflow: auto;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   min-height: 420px;
   max-height: 78vh;
   background: #ffffff;
-  padding: 14px;
+  padding: 8px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -495,6 +498,10 @@ td:first-child {
 
 .svg-stage img {
   display: block;
+  flex: 0 1 100%;
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -606,7 +613,37 @@ td:first-child {
   font-weight: 800;
 }
 
+
+@media (min-width: 1200px) {
+  #cartes.container {
+    width: min(90vw, 1760px, calc(100% - 32px));
+  }
+
+  .visual-layout {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+
+  .svg-stage {
+    min-height: 560px;
+  }
+}
+
+@media (min-width: 1600px) {
+  #cartes.container {
+    width: min(94vw, 1880px, calc(100% - 32px));
+  }
+
+  .svg-stage {
+    min-height: 650px;
+  }
+}
+
 @media (max-width: 980px) {
+  .container,
+  #cartes.container {
+    width: calc(100% - 24px);
+  }
+
   .visual-layout { grid-template-columns: 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .filters { grid-template-columns: repeat(2, 1fr); }
@@ -647,5 +684,9 @@ td:first-child {
 
   .svg-stage { min-height: 320px; }
 
-  .svg-stage img { min-width: 0; }
+  .svg-stage img {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
 }

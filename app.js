@@ -3,6 +3,7 @@ const OFFICIAL_REPO = 'https://github.com/ANSSI-FR/dalton';
 
 const CSV_SOURCES = [
   './data/dalton.csv',
+  'https://cdn.jsdelivr.net/gh/ANSSI-FR/dalton@main/Matrix/ALL-DRAFT-2026-06%20-%20Mesure%20Dalton%20Draft.csv',
   `${RAW_BASE}Matrix/ALL-DRAFT-2026-06%20-%20Mesure%20Dalton%20Draft.csv`,
 ];
 
@@ -208,9 +209,11 @@ async function fetchFirstAvailable(urls) {
       if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
       const text = await response.text();
       if (!text || text.length < 100) throw new Error('Réponse trop courte.');
+      if (/^\s*</.test(text)) throw new Error('La source a renvoyé du HTML au lieu du CSV.');
       return { text, url };
     } catch (error) {
       lastError = error;
+      console.warn('Source Dalton indisponible:', url, error);
     }
   }
   throw lastError || new Error('Aucune source disponible.');
@@ -234,6 +237,7 @@ async function loadData() {
 }
 
 function setStatus(message, kind = '') {
+  if (!els.loadStatus) return;
   els.loadStatus.textContent = message;
   els.loadStatus.className = `status-box ${kind}`.trim();
 }
@@ -494,6 +498,22 @@ function resetFilters() {
 }
 
 function bindEvents() {
+  const requiredIds = [
+    'loadStatus', 'refreshData', 'statTotal', 'statThemes', 'statVerticals', 'statRoadmap',
+    'searchInput', 'themeFilter', 'verticalFilter', 'palierFilter', 'typeFilter',
+    'clearFilters', 'resultCount', 'cardsView', 'tableView', 'showMore',
+    'cardViewBtn', 'tableViewBtn', 'exportFiltered', 'exportRoadmap', 'clearRoadmap',
+    'roadmapList', 'detailDialog', 'detailId', 'detailTitle', 'detailBody', 'closeDialog',
+    'visualTitle', 'visualImage', 'visualDownload'
+  ];
+  const missing = requiredIds.filter((id) => !document.getElementById(id));
+  if (missing.length) {
+    console.error('Éléments HTML manquants:', missing);
+    const fallback = document.getElementById('loadStatus') || document.body;
+    fallback.textContent = `Erreur interface : éléments HTML manquants (${missing.join(', ')}). Remplace index.html avec le pack de réparation.`;
+    return;
+  }
+
   [els.searchInput, els.themeFilter, els.verticalFilter, els.palierFilter, els.typeFilter].forEach((el) => {
     el.addEventListener('input', applyFilters);
     el.addEventListener('change', applyFilters);
