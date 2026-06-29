@@ -3,36 +3,34 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dalton Web — Explorer les mesures cyber ANSSI</title>
-  <meta name="description" content="Application web statique pour explorer la matrice Dalton de l'ANSSI : recherche, filtres, visualisations et feuille de route locale." />
+  <title>Cartographie SI - Gap Analysis (Dalton)</title>
+  <meta name="description" content="Interface web pour explorer la matrice Dalton de l'ANSSI : recherche, filtres, cartes et feuille de route locale." />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
 </head>
+
 <body>
   <a class="skip-link" href="#content">Aller au contenu</a>
 
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand" aria-label="Dalton Web">
-        <span class="brand-mark">D</span>
-        <div>
-          <strong>Dalton Web</strong>
-          <span>Explorateur non officiel</span>
-        </div>
-      </div>
+      <a class="brand" href="#content" aria-label="Cartographie SI - Gap Analysis (Dalton)">
+        Cartographie SI - Gap Analysis (Dalton)
+      </a>
+
       <nav class="main-nav" aria-label="Navigation principale">
-	  <a href="#mesures">Mesures</a>
-	 <a href="#cartes">Cartes</a>
-	  <a href="#roadmap">Feuille de route</a>
-	/nav>
+        <a href="#mesures">Mesures</a>
+        <a href="#cartes">Cartes</a>
+        <a href="#roadmap">Feuille de route</a>
+      </nav>
     </div>
   </header>
 
   <main id="content">
-    
     <section class="status-strip" aria-live="polite">
-      <div class="container">
+      <div class="container status-row">
         <div id="loadStatus" class="status-box">Chargement des mesures Dalton…</div>
+        <button class="button small ghost" id="refreshData" type="button">Recharger les données</button>
       </div>
     </section>
 
@@ -50,7 +48,7 @@
         <strong id="statVerticals">—</strong>
       </article>
       <article class="stat-card">
-        <span class="stat-label">Dans ta feuille de route</span>
+        <span class="stat-label">Feuille de route</span>
         <strong id="statRoadmap">0</strong>
       </article>
     </section>
@@ -59,7 +57,7 @@
       <div class="panel-header">
         <div>
           <p class="eyebrow">Explorer</p>
-          <h2>Mesures Dalton</h2>
+          <h1>Mesures Dalton</h1>
         </div>
         <div class="view-actions">
           <button class="button small" id="exportFiltered" type="button">Exporter la sélection</button>
@@ -72,18 +70,22 @@
           <span>Recherche</span>
           <input id="searchInput" type="search" placeholder="Ex. sauvegarde, MFA, bastion, BYOD…" autocomplete="off" />
         </label>
+
         <label>
           <span>Thématique</span>
           <select id="themeFilter"><option value="">Toutes</option></select>
         </label>
+
         <label>
           <span>Verticale</span>
           <select id="verticalFilter"><option value="">Toutes</option></select>
         </label>
+
         <label>
           <span>Palier</span>
           <select id="palierFilter"><option value="">Tous</option></select>
         </label>
+
         <label>
           <span>Type</span>
           <select id="typeFilter"><option value="">Tous</option></select>
@@ -100,6 +102,7 @@
 
       <div id="cardsView" class="cards-grid" aria-live="polite"></div>
       <div id="tableView" class="table-wrap hidden" aria-live="polite"></div>
+
       <div class="load-more-wrap">
         <button id="showMore" class="button ghost hidden" type="button">Afficher plus</button>
       </div>
@@ -112,17 +115,20 @@
           <h2>Cartes Dalton</h2>
         </div>
       </div>
+
       <div class="visual-layout">
         <aside class="visual-list" aria-label="Choix de la visualisation">
           <button class="visual-choice active" data-visual="Administration" type="button">Administration</button>
           <button class="visual-choice" data-visual="Sauvegardes" type="button">Sauvegardes</button>
           <button class="visual-choice" data-visual="Nomadisme" type="button">Nomadisme</button>
         </aside>
+
         <article class="visual-frame">
           <div class="visual-toolbar">
             <h3 id="visualTitle">Administration</h3>
             <a id="visualDownload" href="#" target="_blank" rel="noopener">Ouvrir le SVG</a>
           </div>
+
           <div class="svg-stage">
             <img id="visualImage" alt="Carte Dalton Administration" />
           </div>
@@ -141,11 +147,22 @@
           <button class="button small danger" id="clearRoadmap" type="button">Vider</button>
         </div>
       </div>
+
       <p class="muted">
-        Les mesures ajoutées ici sont stockées uniquement dans ton navigateur, via localStorage.
+        Les mesures ajoutées ici sont stockées uniquement dans ton navigateur.
         Aucune donnée n'est envoyée à un serveur.
       </p>
+
       <div id="roadmapList" class="roadmap-list"></div>
+    </section>
+
+    <section class="container attribution" id="source">
+      <p>
+        Données issues du dépôt
+        <a href="https://github.com/ANSSI-FR/dalton" target="_blank" rel="noopener">ANSSI-FR/dalton</a>,
+        réutilisées sous
+        <a href="https://github.com/ANSSI-FR/dalton/blob/main/LICENSE.md" target="_blank" rel="noopener">Licence Ouverte 2.0</a>.
+      </p>
     </section>
   </main>
 
@@ -157,16 +174,15 @@
       </div>
       <button id="closeDialog" class="icon-button" type="button" aria-label="Fermer">×</button>
     </div>
+
     <div id="detailBody" class="detail-body"></div>
   </dialog>
 
   <footer class="site-footer">
     <div class="container footer-grid">
+      <p>Cartographie SI - Gap Analysis (Dalton)</p>
       <p>
-        Interface non officielle générée pour consulter Dalton. Données © ANSSI, réutilisées sous Licence Ouverte 2.0.
-      </p>
-      <p>
-        <a href="https://github.com/ANSSI-FR/dalton" target="_blank" rel="noopener">Source ANSSI-FR/dalton</a>
+        <a href="https://github.com/ANSSI-FR/dalton" target="_blank" rel="noopener">Source Dalton</a>
       </p>
     </div>
   </footer>
